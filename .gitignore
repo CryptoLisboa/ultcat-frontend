@@ -1,0 +1,17 @@
+# Working intelligence, delegation harness and agent instructions.
+# These stay local: the public repo is app code and assets only.
+BRIEF.md
+.agent/
+AGENTS.md
+CLAUDE.md
+web/AGENTS.md
+web/CLAUDE.md
+
+# Verification + asset-pipeline harness (Playwright gates, anvil fork smoke,
+# the sprite build). Unit tests stay in — they document the swap maths.
+web/scripts/
+
+# Local env. web/.gitignore also covers this; belt and braces before a public push.
+.env
+.env.*
+!.env.example

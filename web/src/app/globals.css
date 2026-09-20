@@ -1,0 +1,1367 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #04070b;
+  --ink-raised: #0a1018;
+  --ink-line: rgba(199, 242, 255, 0.12);
+  --foam: #e6f3f8;
+  --foam-muted: #aac2cc;
+  /* Liquid glass material. Tint alpha + backdrop brightness are sized so --foam-muted keeps >= 4.5:1
+     over the brightest aurora core (worst case ~ rgb(150,235,255) behind the panel). */
+  --glass-tint: rgba(8, 16, 28, 0.66);
+  --glass-blur: 22px;
+  --glass-backdrop: blur(var(--glass-blur)) saturate(150%) brightness(0.8);
+  --glass-rim: linear-gradient(145deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08) 28%, rgba(255, 255, 255, 0) 55%, rgba(129, 227, 255, 0.22) 100%);
+  --glass-sheen: linear-gradient(165deg, rgba(229, 250, 255, 0.11) 0%, rgba(229, 250, 255, 0.025) 32%, rgba(229, 250, 255, 0) 55%);
+  --glass-depth: 0 22px 44px -18px rgba(0, 0, 0, 0.7), 0 2px 6px -2px rgba(0, 0, 0, 0.35);
+  --cyan: #4cdbff;
+  --cyan-dim: rgba(76, 219, 255, 0.14);
+  --cyan-glow: rgba(76, 219, 255, 0.35);
+  --up: #3dd68c;
+  --down: #ff6b7a;
+  --gutter: 16px;
+  --max: 720px;
+}
+
+@theme inline {
+  --color-background: var(--ink);
+  --color-foreground: var(--foam);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-plex-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* iOS Safari inflates text in some layouts; that is what pushed the buy pair off-screen */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--foam);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(76, 219, 255, 0.38);
+  color: #ffffff;
+}
+
+:where(a, input, button):focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: #9aecff;
+}
+
+.page {
+  width: 100%;
+  max-width: 100vw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ——— Hero ——— */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 var(--gutter) 2.5rem;
+  overflow: hidden;
+}
+
+.hero-banner {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 45%, rgba(0, 0, 0, 0.55) 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 45%, rgba(0, 0, 0, 0.55) 72%, transparent 100%);
+}
+
+.hero-banner-img {
+  object-fit: cover;
+  object-position: center 30%;
+  transform: scale(1.02);
+  animation: banner-drift 18s ease-in-out infinite alternate;
+}
+
+.hero-banner-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(3, 6, 12, 0.2) 0%, rgba(3, 6, 12, 0.5) 50%, rgba(3, 6, 12, 0.35) 100%),
+    radial-gradient(ellipse at 50% 85%, rgba(76, 219, 255, 0.16), transparent 60%);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 70%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(80% 62% at 26% 94%, rgba(3, 6, 12, 0.8), rgba(3, 6, 12, 0.4) 55%, transparent 82%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: rise 0.9s ease-out both;
+}
+
+.hero-logo {
+  width: 88px;
+  height: 88px;
+  border-radius: 28%;
+  box-shadow: 0 0 0 2px rgba(76, 219, 255, 0.35), 0 12px 40px rgba(0, 0, 0, 0.45);
+  animation: logo-bob 4.5s ease-in-out infinite;
+}
+
+.hero-brand {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 14vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--foam);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 36px rgba(3, 6, 12, 0.7);
+}
+
+.hero-ticker {
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+  color: var(--cyan);
+  text-shadow: 0 0 28px var(--cyan-glow);
+}
+
+.hero-tagline {
+  margin: 0.25rem 0 0;
+  max-width: 28ch;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--foam);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), 0 2px 18px rgba(3, 6, 12, 0.85);
+}
+
+.hero-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.hero-ctas-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+/* Three venues, equal weight. Obsidian + WolfSwap always share the top row —
+   the label stacks so both fit at 320px. The third venue takes its own
+   full-width row until there is room for three names side by side. */
+.buy-venues {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.buy-venues > :nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+/* Three across needs ~170px per button for "WolfSwap" in Syne ExtraBold plus the
+   20px slack rule. That is 34rem of row, so the hero's CTA column has to widen
+   with it — at 26rem the row was squeezed to 416px and the name was ellipsised
+   on desktop while mobile (2-up, wider columns) looked fine. */
+@media (min-width: 40rem) {
+  .hero-ctas {
+    max-width: 34rem;
+  }
+
+  .buy-venues {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 34rem;
+  }
+
+  .buy-venues > :nth-child(3) {
+    grid-column: auto;
+  }
+}
+
+.btn.buy-btn {
+  min-width: 0;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding: 0.45rem 0.4rem 0.55rem;
+  line-height: 1.1;
+  overflow: hidden;
+}
+
+.buy-btn-lead {
+  font-size: clamp(0.62rem, 2.4vw, 0.72rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+}
+
+.buy-btn-name {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(0.78rem, 3.9vw, 1.05rem);
+  letter-spacing: -0.03em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* At 320-420px "WolfSwap" in Syne ExtraBold clears the button by only ~3px with
+   the default gutters — measured with a Range against the real font, and exactly
+   the margin that let Safari clip it before. Buy the slack back with tighter
+   gutters and a slightly softer vw step here, rather than shrinking type at
+   every width. Must stay AFTER the base .btn.buy-btn / .buy-btn-name rules:
+   same specificity, so source order decides. */
+@media (max-width: 26rem) {
+  .buy-venues {
+    gap: 0.4rem;
+  }
+
+  .btn.buy-btn {
+    padding-inline: 0.2rem;
+  }
+
+  .buy-btn-name {
+    font-size: clamp(0.68rem, 3.4vw, 1.05rem);
+  }
+}
+
+/* ——— Sections ——— */
+.section {
+  position: relative;
+  isolation: isolate;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: var(--max);
+  margin: 1.25rem auto 0;
+  padding: 1.5rem 1.25rem 1.6rem;
+  border-radius: 28px;
+}
+
+/* ——— Liquid glass material ——— */
+.section,
+.footer {
+  background: var(--glass-sheen), var(--glass-tint);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  backdrop-filter: var(--glass-backdrop);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 0 32px rgba(129, 227, 255, 0.05),
+    var(--glass-depth);
+}
+
+/* specular rim: bright top-left edge fading around the panel, like light catching a lens */
+.section::before,
+.footer::before,
+.btn-secondary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--glass-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.section-accent {
+  --glass-rim: linear-gradient(145deg, rgba(229, 250, 255, 0.75), rgba(76, 219, 255, 0.35) 30%, rgba(76, 219, 255, 0.06) 60%, rgba(76, 219, 255, 0.4) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 0 48px rgba(76, 219, 255, 0.09),
+    var(--glass-depth),
+    0 18px 60px -24px rgba(76, 219, 255, 0.45);
+}
+
+@media (min-width: 720px) {
+  .section {
+    margin-top: 1.5rem;
+    padding: 2rem 2rem 2.1rem;
+    border-radius: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --glass-blur: 16px;
+  }
+}
+
+/* no backdrop blur (or user asked for less transparency): go near-opaque so text contrast never depends on the aurora */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-tint: rgba(8, 16, 28, 0.92);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-tint: rgba(8, 16, 28, 0.94);
+    --glass-backdrop: none;
+  }
+}
+
+.section-title {
+  margin: 0 0 1rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  color: var(--foam);
+}
+
+/* ——— Buttons ——— */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #8ae9ff 0%, var(--cyan) 55%, #2abee4 100%);
+  color: #031018;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -2px 6px rgba(0, 61, 202, 0.22),
+    0 10px 26px -10px rgba(76, 219, 255, 0.75);
+}
+
+.btn-primary:hover {
+  background: #9aecff;
+  color: #031018;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-sheen), rgba(8, 16, 28, 0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  color: var(--foam);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 10px 24px -12px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secondary:hover {
+  background: var(--glass-sheen), rgba(20, 40, 60, 0.6);
+  color: #d6f6ff;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  border-color: rgba(76, 219, 255, 0.25);
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.btn-ghost:hover {
+  background: rgba(76, 219, 255, 0.22);
+  color: #9aecff;
+}
+
+/* ——— Contract ——— */
+.contract-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--ink-line);
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.contract-address {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  word-break: break-all;
+  color: var(--foam);
+}
+
+.contract-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inline-code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.78em;
+  word-break: break-all;
+  color: var(--cyan);
+}
+
+/* posts about the ticker and the contract address */
+.buzz {
+  margin-top: 1rem;
+}
+
+.buzz-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--foam-muted);
+}
+
+.buzz-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  max-width: 26rem;
+}
+
+.btn.buzz-btn {
+  min-width: 0;
+  width: 100%;
+  padding-inline: 0.5rem;
+  font-size: clamp(0.75rem, 3.5vw, 0.85rem);
+  overflow: hidden;
+}
+
+/* ——— Stats ——— */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0;
+}
+
+.stat {
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--ink-line);
+}
+
+.stat dt {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  color: var(--foam-muted);
+}
+
+.stat dd {
+  margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  color: var(--foam);
+}
+
+.stat-up {
+  color: var(--up);
+}
+
+.stat-down {
+  color: var(--down);
+}
+
+/* ——— Chart ——— */
+.chart-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 10 / 14;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--ink-line);
+  background: var(--ink-raised);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.chart-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ——— Swap slot ——— */
+.swap-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+
+}
+
+.swap-slot-title {
+  margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.swap-slot-copy {
+  margin: 0 0 0.35rem;
+  color: var(--foam-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 36ch;
+}
+
+/* ——— Swap widget ——— */
+.swap-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+
+}
+
+.swap-widget-top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.swap-dir {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(4, 7, 11, 0.55);
+  border: 1px solid var(--ink-line);
+}
+
+.swap-dir-btn {
+  min-height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--foam-muted);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.swap-dir-btn.active {
+  background: var(--cyan-dim);
+  color: var(--cyan);
+}
+
+.swap-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.swap-field-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--foam-muted);
+}
+
+.swap-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.swap-max {
+  border: 0;
+  background: transparent;
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.swap-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--ink-line);
+  background: rgba(4, 7, 11, 0.65);
+  color: var(--foam);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 1.15rem;
+}
+
+.swap-input:focus {
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+.swap-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--ink-line);
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.swap-quote-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--foam-muted);
+}
+
+.swap-quote-row span:last-child {
+  color: var(--foam);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.swap-slippage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.swap-slippage-label {
+  font-size: 0.8rem;
+  color: var(--foam-muted);
+}
+
+.swap-slippage-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.swap-chip {
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--ink-line);
+  background: transparent;
+  color: var(--foam-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.swap-chip.active {
+  border-color: rgba(76, 219, 255, 0.45);
+  background: var(--cyan-dim);
+  color: var(--cyan);
+}
+
+.swap-chip-input {
+  min-height: 36px;
+  width: 6.5rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--ink-line);
+  background: rgba(4, 7, 11, 0.55);
+  color: var(--foam);
+  font-size: 0.85rem;
+}
+
+.swap-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.swap-warn-amber {
+  color: #f0c14b;
+}
+
+.swap-warn-red {
+  color: var(--down);
+}
+
+.swap-status {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--foam-muted);
+}
+
+.swap-success {
+  color: var(--up);
+}
+
+.swap-action {
+  width: 100%;
+}
+
+.swap-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ——— How to buy ——— */
+.howto-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.howto-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.howto-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.howto-title {
+  margin: 0 0 0.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.howto-copy {
+  margin: 0;
+  color: var(--foam-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+/* ——— About ——— */
+.about-lead {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.15rem, 4.4vw, 1.4rem);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--foam);
+  max-width: 24ch;
+}
+
+.about-shout {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.9rem, 9vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--foam);
+}
+
+.about-ult {
+  color: var(--cyan);
+  text-shadow: 0 0 30px var(--cyan-glow);
+}
+
+.about-copy {
+  margin: 0 0 0.75rem;
+  color: var(--foam-muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  max-width: 48ch;
+}
+
+.about-copy:last-child {
+  margin-bottom: 0;
+}
+
+/* ——— Footer ——— */
+.footer {
+  position: relative;
+  isolation: isolate;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: var(--max);
+  margin: 1.5rem auto 2.5rem;
+  padding: 1.35rem 1.25rem 1.5rem;
+  border-radius: 24px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 0.85rem;
+  font-weight: 600;
+}
+
+.footer-links a {
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-credit {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--foam);
+}
+
+.footer-credit a {
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.footer-disclaimer {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--foam-muted);
+  max-width: 52ch;
+}
+
+/* ——— Motion ——— */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes logo-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes banner-drift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.06) translateY(-1.5%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-inner,
+  .hero-logo,
+  .hero-banner-img {
+    animation: none;
+  }
+}
+
+/* ——— Desktop ——— */
+@media (min-width: 640px) {
+  .hero {
+    align-items: center;
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-logo {
+    width: 112px;
+    height: 112px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .chart-frame {
+    aspect-ratio: 16 / 10;
+  }
+
+  .contract-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .contract-address {
+    font-size: 0.85rem;
+    word-break: normal;
+  }
+}
+
+/* ——— Aurora backdrop (fixed, behind everything) ———
+   Palette pulled from ult.trade: cyan #4cdbff, ice #81e3ff→#e5faff, teal #1a4e5d, royal rgba(0,61,202),
+   pink fringe #ff5ecc, gold sparks #ffbf28 (the cat's lightning). */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--ink);
+}
+
+.aurora-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(140% 70% at 50% 115%, rgba(26, 78, 93, 0.6), transparent 62%),
+    radial-gradient(90% 60% at 10% -5%, rgba(0, 61, 202, 0.24), transparent 60%),
+    radial-gradient(70% 50% at 95% 10%, rgba(60, 9, 45, 0.45), transparent 65%),
+    linear-gradient(180deg, #03060c 0%, #050d18 55%, #06151f 100%);
+}
+
+.aurora-band {
+  position: absolute;
+  left: -30vw;
+  width: 160vw;
+  mix-blend-mode: screen;
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 62%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 62%, transparent 100%);
+}
+
+/* upper magenta / royal-blue fringe, like the top edge of a real aurora */
+.aurora-band-fringe {
+  top: -6vh;
+  height: 46vh;
+  opacity: 0.85;
+  background:
+    radial-gradient(38% 48% at 58% 62%, rgba(255, 94, 204, 0.28), transparent 70%),
+    radial-gradient(34% 44% at 26% 52%, rgba(0, 61, 202, 0.34), transparent 70%),
+    radial-gradient(26% 36% at 82% 58%, rgba(255, 94, 204, 0.12), transparent 70%);
+  transform: rotate(-12deg);
+  animation: aurora-sway-b 46s ease-in-out infinite alternate;
+}
+
+/* main cyan → ice ribbon */
+.aurora-band-main {
+  top: 6vh;
+  height: 62vh;
+  background:
+    radial-gradient(46% 42% at 28% 56%, rgba(76, 219, 255, 0.6), transparent 70%),
+    radial-gradient(40% 38% at 60% 44%, rgba(129, 227, 255, 0.42), transparent 70%),
+    radial-gradient(32% 30% at 86% 62%, rgba(42, 190, 228, 0.38), transparent 70%),
+    radial-gradient(60% 22% at 50% 70%, rgba(26, 78, 93, 0.55), transparent 75%);
+  transform: rotate(-8deg);
+  animation: aurora-sway-a 38s ease-in-out infinite alternate;
+}
+
+/* bright ice curtain with vertical rays */
+.aurora-band-curtain {
+  top: 16vh;
+  height: 48vh;
+  opacity: 0.9;
+  background:
+    repeating-linear-gradient(93deg, rgba(229, 250, 255, 0.07) 0 2px, transparent 2px 13px),
+    repeating-linear-gradient(91deg, rgba(129, 227, 255, 0.08) 0 5px, transparent 5px 37px),
+    repeating-linear-gradient(95deg, rgba(229, 250, 255, 0.05) 0 1px, transparent 1px 23px),
+    radial-gradient(38% 34% at 44% 50%, rgba(199, 242, 255, 0.34), transparent 72%);
+  -webkit-mask-image: radial-gradient(44% 50% at 44% 50%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(44% 50% at 44% 50%, #000 25%, transparent 78%);
+  transform: rotate(-6deg);
+  animation: aurora-sway-c 30s ease-in-out infinite alternate;
+}
+
+.aurora-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 18px 24px, rgba(229, 250, 255, 0.9), transparent 100%),
+    radial-gradient(1px 1px at 132px 86px, rgba(229, 250, 255, 0.7), transparent 100%),
+    radial-gradient(1.5px 1.5px at 74px 158px, rgba(199, 242, 255, 0.8), transparent 100%),
+    radial-gradient(1px 1px at 196px 190px, rgba(229, 250, 255, 0.6), transparent 100%),
+    radial-gradient(1px 1px at 240px 40px, rgba(255, 255, 255, 0.55), transparent 100%),
+    radial-gradient(1.5px 1.5px at 290px 250px, rgba(255, 191, 40, 0.75), transparent 100%),
+    radial-gradient(1px 1px at 40px 290px, rgba(229, 250, 255, 0.65), transparent 100%);
+  background-size: 320px 320px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.25) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.25) 100%);
+  animation: aurora-twinkle 7s ease-in-out infinite alternate;
+}
+
+/* film grain kills gradient banding on 8-bit panels */
+.aurora-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@keyframes aurora-sway-a {
+  0% { transform: translate3d(-6vw, 0, 0) rotate(-8deg) scaleY(1); }
+  50% { transform: translate3d(4vw, -3vh, 0) rotate(-5deg) scaleY(1.15); }
+  100% { transform: translate3d(9vw, 2vh, 0) rotate(-10deg) scaleY(0.9); }
+}
+
+@keyframes aurora-sway-b {
+  0% { transform: translate3d(8vw, 0, 0) rotate(-12deg); }
+  100% { transform: translate3d(-8vw, 3vh, 0) rotate(-7deg) scaleY(1.2); }
+}
+
+@keyframes aurora-sway-c {
+  0% { transform: translate3d(-4vw, 2vh, 0) rotate(-6deg) skewX(0deg); opacity: 0.65; }
+  50% { opacity: 1; }
+  100% { transform: translate3d(7vw, -2vh, 0) rotate(-3deg) skewX(-8deg); opacity: 0.75; }
+}
+
+@keyframes aurora-twinkle {
+  from { opacity: 0.55; }
+  to { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-band,
+  .aurora-stars {
+    animation: none;
+  }
+}
+
+/* ——— Meme / PFP generator ——— */
+/* ── Generator ──────────────────────────────────────────────────────────────
+   Two panes: a STICKY stage (canvas + the actions that export it) and a rail
+   holding every control. At 340px the rail measures ~600px, so it never needs
+   its own scroller — which is why this is two columns and not the reference's
+   three. The third column there is a display panel we have no equivalent for. */
+.gen {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 55rem) {
+  .gen {
+    grid-template-columns: minmax(0, 1fr) 21.25rem;
+    gap: 2rem;
+    /* Without this the sticky child stretches to the row height and never sticks. */
+    align-items: start;
+  }
+}
+
+/* Save/Share lives in this card, so it can never be scrolled away from the
+   thing it exports.
+   Sticky dies SILENTLY if any ancestor has `overflow` other than visible.
+   `overflow-x: hidden` sits on body and html has no overflow rule, so it
+   propagates to the viewport and sticky survives. Do not move it to html. */
+.gen-stage {
+  position: sticky;
+  top: 0.75rem;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  border-radius: 22px;
+  border: 1px solid var(--ink-line);
+  /* FULLY opaque, and deliberately WITHOUT backdrop-filter: this card scrolls
+     over the chip rail. At 0.94 the cyan chips ghosted straight through it, and
+     re-blurring overlapping content every frame is the one thing that janks
+     mid-range Android. */
+  background: #070e18;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* MOBILE: fixed-height box. The controls sit BELOW the stage here, so if the
+   box grew and shrank with the output ratio, tapping Size would slide the Size
+   chips out from under the thumb that just tapped them. The art letterboxes
+   inside instead — same idea as a video player. */
+.gen-canvas-wrap {
+  position: relative;
+  min-width: 0;
+  height: 42svh;
+}
+
+.gen-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 16px;
+  background: rgba(2, 6, 11, 0.5);
+}
+
+/* DESKTOP: the controls are a sibling COLUMN, so nothing sits under the stage
+   to be displaced — the box can track the ratio exactly and skip the letterbox.
+   --gen-ar is set inline by the component from the selected output size. */
+@media (min-width: 55rem) {
+  /* The WRAP takes the ratio, not the canvas, so the export overlay (inset: 0)
+     lands exactly on the artwork instead of on the empty box around it. */
+  .gen-canvas-wrap {
+    width: min(100%, calc((100svh - 14rem) * var(--gen-ar, 1)));
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .gen-canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--gen-ar, 1);
+  }
+}
+
+/* The export result sits OVER the canvas, not below it: appended below, it
+   would grow the sticky card until Save/Share left the screen. Same box, no
+   layout shift, and long-press-to-save still targets a real <img>. */
+.gen-result {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: rgba(2, 6, 11, 0.92);
+}
+
+.gen-result-img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 12px;
+}
+
+.gen-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.btn.gen-random {
+  border-color: var(--ink-line);
+  background: rgba(8, 16, 28, 0.55);
+  color: var(--foam);
+}
+
+/* Height reserved so a status message never nudges the card and pushes the
+   buttons under the fold. */
+.gen-status {
+  margin: 0;
+  min-height: 1.1rem;
+  font-size: 0.78rem;
+  line-height: 1.1rem;
+  text-align: center;
+  color: var(--foam-muted);
+}
+
+.gen-status-error {
+  color: var(--down);
+}
+
+.gen-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.gen-blurb {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--foam-muted);
+}
+
+.gen-blurb strong {
+  color: var(--foam);
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.gen-group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.gen-legend {
+  display: block;
+  padding: 0;
+  margin-bottom: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--foam-muted);
+}
+
+/* Equal cells rather than ragged flex-wrap: it keeps Background on two rows
+   instead of three and stops single chips stranding on a line of their own. */
+.gen-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+  gap: 0.4rem;
+}
+
+.gen-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  min-width: 0;
+  /* 44px is the thumb-target floor; these are the main controls on a phone. */
+  min-height: 44px;
+  padding: 0.4rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--ink-line);
+  background: rgba(8, 16, 28, 0.55);
+  color: var(--foam);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.15;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.gen-chip:hover {
+  border-color: var(--cyan-glow);
+}
+
+.gen-chip[aria-pressed="true"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #04070b;
+}
+
+.gen-chip-hint {
+  font-size: 0.6rem;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.gen-field {
+  display: block;
+}
+
+.gen-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--ink-line);
+  background: rgba(2, 6, 11, 0.55);
+  color: var(--foam);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 1rem;
+  /* Keeps the focused field clear of the sticky card when the mobile keyboard
+     scrolls it into view; neither iOS nor Android shrinks dvh for the keyboard. */
+  scroll-margin-top: 55svh;
+}
+
+.gen-input::placeholder {
+  color: var(--foam-muted);
+  opacity: 0.7;
+}
+
+.gen-input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+.gen-credit {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--foam-muted);
+}
+
+.gen-credit a {
+  color: var(--foam);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+/* The generator is the one section that needs more than --max: two columns do
+   not fit in 720px. Must stay AFTER .section — same specificity, source order. */
+.section-wide {
+  max-width: 68rem;
+}
+
+/* Keep both action labels on one line. At large accessibility text sizes on a
+   narrow phone "Save / Share" wrapped and made the card taller, which eats the
+   rail below it. Shrink the label instead of wrapping it. */
+.gen-actions .btn {
+  white-space: nowrap;
+  padding-inline: 0.5rem;
+  font-size: clamp(0.82rem, 3.6vw, 1rem);
+}
+
+/* Two lines reserved: the post-export line is long enough to wrap on a narrow
+   phone, and a card that grows after the tap pushes the rail down. */
+.gen-status {
+  min-height: 2.2rem;
+}
+
+@media (min-width: 55rem) {
+  .gen-status {
+    min-height: 1.1rem;
+  }
+}
