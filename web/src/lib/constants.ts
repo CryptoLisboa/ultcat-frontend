@@ -46,6 +46,10 @@ export const DEXSCREENER_API_URL =
 export const EXPLORER_URL =
   `https://explorer.cronos.org/address/${ULTCAT_ADDRESS}` as const;
 
+/** The explorer's own token page — where the holder count can be cross-checked. */
+export const EXPLORER_TOKEN_URL =
+  `https://explorer.cronos.org/token/${ULTCAT_ADDRESS}` as const;
+
 export const X_URL = "https://x.com/UltraCatOnCro" as const;
 
 /** DRod founded ULTCAT and created the cat artwork. Credited on the page and in the metadata. */

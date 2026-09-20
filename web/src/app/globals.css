@@ -1365,3 +1365,20 @@ a:hover {
     min-height: 1.1rem;
   }
 }
+
+/* The holders figure is a snapshot, not live like the rest of the row, so the
+   label carries its date and the value links to the explorer to be checked. */
+.stat-note {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.stat-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.stat-link:hover {
+  border-bottom-color: var(--cyan);
+}
