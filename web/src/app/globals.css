@@ -511,11 +511,14 @@ a:hover {
   color: var(--foam);
 }
 
-.stat-up {
+/* Qualified with `.stat dd` deliberately: the bare `.stat-up` / `.stat-down`
+   selectors are (0,1,0) and lose to `.stat dd` at (0,1,1), so the 24h move
+   rendered in the default text colour and the red/green signal was lost. */
+.stat dd.stat-up {
   color: var(--up);
 }
 
-.stat-down {
+.stat dd.stat-down {
   color: var(--down);
 }
 

@@ -15,3 +15,6 @@ web/scripts/
 .env
 .env.*
 !.env.example
+
+# Agent worktrees: local scratch, never part of the project.
+.claude/
