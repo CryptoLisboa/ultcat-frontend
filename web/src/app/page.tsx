@@ -158,15 +158,19 @@ export default async function Home() {
         <h2 id="about-heading" className="section-title">
           About
         </h2>
-        <p className="about-lead">
-          $ULTCAT — The community driven Cat on Cronos.
-        </p>
-        <p className="about-shout">
-          The cat went <span className="about-ult">ULT</span>ra.
-        </p>
-        <p className="about-copy">
-          Unofficial meme. Not Ult, Not CRO. Just the cat.
-        </p>
+        <div className="about-grid">
+          <p className="about-shout">
+            The cat went <span className="about-ult">ULT</span>ra.
+          </p>
+          <div>
+            <p className="about-lead">
+              $ULTCAT — The community driven Cat on Cronos.
+            </p>
+            <p className="about-copy">
+              Unofficial meme. Not Ult, Not CRO. Just the cat.
+            </p>
+          </div>
+        </div>
       </section>
 
       <footer className="footer">
