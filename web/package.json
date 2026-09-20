@@ -7,8 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run",
-    "fork-smoke": "tsx scripts/fork-smoke.ts"
+    "test": "vitest run"
   },
   "dependencies": {
     "@reown/appkit": "^1.8.24",
