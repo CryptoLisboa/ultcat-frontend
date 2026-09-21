@@ -9,7 +9,11 @@ web/CLAUDE.md
 
 # Verification + asset-pipeline harness (Playwright gates, anvil fork smoke,
 # the sprite build). Unit tests stay in — they document the swap maths.
-web/scripts/
+web/scripts/*
+# …except the holder scan, which a scheduled workflow has to be able to run.
+# It reads a public RPC and carries no credentials. Everything else here stays
+# local; fork-smoke.ts in particular references secrets.
+!web/scripts/build-holders.mjs
 
 # Local env. web/.gitignore also covers this; belt and braces before a public push.
 .env

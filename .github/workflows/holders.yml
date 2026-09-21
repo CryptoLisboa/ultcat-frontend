@@ -1,0 +1,63 @@
+# Refreshes the holder count once a day.
+#
+# The count cannot come from an API: nothing free exposes a holder count for
+# Cronos, so it is derived by replaying every Transfer since deploy. That scan
+# is ~100 seconds, which is longer than a serverless function may run, so it
+# happens here instead. Actions minutes are free on public repositories.
+#
+# The scan is self-checking: build-holders.mjs throws rather than writing a
+# snapshot if any real address ends up holding a negative balance, which is
+# what a partially-served log range looks like. A failed run therefore leaves
+# the previous snapshot in place rather than publishing a wrong number.
+name: Refresh holder count
+
+on:
+  schedule:
+    # 04:17 UTC — off the hour, because everything else in the world runs at :00
+    # and the public RPC is busiest then.
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+# Only one scan at a time; two concurrent runs would race on the commit.
+concurrency:
+  group: holders
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # The scan replays from the deploy block every time, so it gets slower as
+    # the chain grows: 412 windows / ~100s on 2026-09-20, 477 / ~147s on
+    # 2026-09-21, i.e. roughly +65 windows and +20s per day. That is fine for
+    # months and then it is not. When runs start creeping past ~10 minutes,
+    # switch to an incremental scan: commit the balance map alongside the
+    # snapshot and replay only from the last scanned block, which the delta
+    # measurement put at ~64 windows and ~19s a day.
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Scan the chain
+        working-directory: web
+        run: node scripts/build-holders.mjs
+
+      - name: Commit the snapshot if it moved
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Explicit paths, never `git add -A`: this repo has had worktrees
+          # swept in as embedded repositories before.
+          git add web/src/lib/holders.ts web/src/lib/holders-history.json
+          if git diff --staged --quiet; then
+            echo "Holder count unchanged; nothing to commit."
+          else
+            git commit -m "Refresh the holder count"
+            git push
+          fi
