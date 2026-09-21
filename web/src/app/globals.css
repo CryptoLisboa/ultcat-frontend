@@ -1385,3 +1385,79 @@ a:hover {
 .stat-link:hover {
   border-bottom-color: var(--cyan);
 }
+
+/* ─── Wide layout below the hero ────────────────────────────────────────────
+   Everything below the fold was capped at --max (720px), which left roughly
+   half a desktop viewport empty either side. The hero keeps its narrow
+   measure — a headline wants a short line — but the content sections widen
+   and lay their contents out across the space instead of stacking in a
+   column. Visual language is unchanged: same aurora, same glass.
+
+   Must stay AFTER the base rules: same specificity, source order decides. */
+@media (min-width: 60rem) {
+  .section,
+  .footer {
+    max-width: 68rem;
+    padding: 1.75rem 2rem 1.9rem;
+  }
+
+  /* Six figures across one line reads as an instrument panel rather than a
+     2x3 block of cards. */
+  .stats-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0 1.25rem;
+  }
+
+  .stat {
+    border-top: none;
+    border-left: 1px solid var(--ink-line);
+    padding: 0.2rem 0 0.2rem 1rem;
+  }
+
+  .stats-grid > .stat:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* The 10/14 portrait frame exists for phones. On a wide section it left a
+     very tall letterbox. */
+  .chart-frame {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Three steps side by side: they are peers, and stacked they implied the
+     third was somehow further away than the first. */
+  .howto-list {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .howto-list > li {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* The address in step 3 is a long unbroken string; in a third of the width
+     it has to be allowed to wrap. */
+  .howto-list .inline-code {
+    overflow-wrap: anywhere;
+  }
+
+  /* About becomes a spread: the shout is the loud half, the framing copy sits
+     beside it rather than beneath. */
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .about-lead {
+    max-width: none;
+  }
+
+  .about-shout {
+    margin-bottom: 0;
+  }
+}
