@@ -948,15 +948,55 @@ a:hover {
     aspect-ratio: 16 / 10;
   }
 
+  /* Three clusters — address, actions, buzz — on one line. `space-between`
+     used to scatter them at whatever width they happened to be, so nothing
+     lined up with anything; a grid gives the address the slack instead and
+     pins the two button groups to a shared right edge. */
   .contract-row {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
-    justify-content: space-between;
+    column-gap: 1.5rem;
+    row-gap: 0;
   }
 
   .contract-address {
     font-size: 0.85rem;
     word-break: normal;
+    /* Spans the label row and the button row so it centres against the whole
+       group rather than against the label alone. */
+    grid-column: 1;
+    /* On the button row, not spanning both: centring across the label row too
+       would float the address ~13px above the line the four buttons share. */
+    grid-row: 2;
+    align-self: center;
+  }
+
+  /* The label used to sit above only the right-hand pair, pushing those two
+     buttons below the others. All four buttons now share one centre line and
+     the label rides above the whole group. */
+  .buzz {
+    display: contents;
+  }
+
+  .buzz-label {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: end;
+    margin: 0 0 0.45rem;
+  }
+
+  .contract-actions {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .buzz-row {
+    grid-column: 3;
+    grid-row: 2;
+    max-width: none;
+    grid-auto-flow: column;
+    grid-template-columns: none;
   }
 }
 
