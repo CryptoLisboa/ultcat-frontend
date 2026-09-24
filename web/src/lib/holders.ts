@@ -15,8 +15,8 @@ export type HolderSnapshot = {
 };
 
 export const HOLDERS: HolderSnapshot = {
-  count: 343,
-  block: 95603066,
-  takenAt: "2026-09-23T04:19:30.355Z",
-  transfers: 21080,
+  count: 346,
+  block: 95807896,
+  takenAt: "2026-09-24T04:19:55.239Z",
+  transfers: 24651,
 };
